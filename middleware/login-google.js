@@ -18,8 +18,6 @@ passport.use(
     async function (_, _, profile, cb) {
       try {
         let user = await findUserByUsername(profile.emails[0].value);
-        console.log("profile", JSON.stringify(profile, null, 2));
-        console.log("user", JSON.stringify(user, null, 2));
 
         if (profile.emails[0].value && !user) {
           // No existing user found, create them.
