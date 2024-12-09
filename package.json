@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/reezy24/exercise-app-backend.git"
+    "url": "git+https://github.com/SimoSultan/exercise-app-backend.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/reezy24/exercise-app-backend/issues"
+    "url": "https://github.com/SimoSultan/exercise-app-backend/issues"
   },
-  "homepage": "https://github.com/reezy24/exercise-app-backend#readme",
+  "homepage": "https://github.com/SimoSultan/exercise-app-backend#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
