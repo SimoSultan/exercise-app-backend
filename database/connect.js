@@ -2,7 +2,8 @@ const { Client } = require("pg");
 
 function buildDBConnectionObj() {
   // Note: `DATABASE_URL` is the var name supplied by Heroku - do not change.
-  let db_url = process.env.NODE_ENV !== 'development' ? process.env.DATABASE_URL : false 
+  let db_url =
+    process.env.NODE_ENV !== "development" ? process.env.DATABASE_URL : false;
   let ssl = false;
 
   if (!db_url) {
@@ -15,7 +16,10 @@ function buildDBConnectionObj() {
     db_url = `postgres://${db_user}:${db_pass}@${db_host}:${db_port}/${db_name}`;
   }
 
-  if (process.env.NODE_ENV !== 'development' && process.env.POSTGRES_REQUIRE_SSL) {
+  if (
+    process.env.NODE_ENV !== "development" &&
+    process.env.POSTGRES_REQUIRE_SSL
+  ) {
     ssl = {
       rejectUnauthorized: Boolean(process.env.POSTGRES_REJECT_UNAUTHORIZED),
     };
