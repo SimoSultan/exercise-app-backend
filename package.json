@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "migrate:production": "knex migrate:latest --env production",
+    "migrate": "knex migrate:latest",
     "start": "node index.js",
-    "dev": "nodemon index.js",
+    "dev": "cross-env NODE_ENV=development USE_LOCAL_DB=true PORT=3000 nodemon local.js",
+    "dev:vercel": "vercel dev",
     "build": "echo 'No build needed for plain JS'",
-    "vercel-build": "npm run build"
+    "vercel-build": "npm run migrate:production && npm run build"
   },
   "repository": {
     "type": "git",
@@ -24,15 +27,17 @@
     "dotenv": "^16.0.1",
     "express": "^4.21.2",
     "express-session": "^1.17.3",
+    "knex": "^3.1.0",
     "passport": "^0.6.0",
     "passport-google-oauth2": "^0.2.0",
     "passport-google-oauth20": "^2.0.0",
-    "pg": "^8.7.3"
+    "pg": "^8.13.1"
   },
   "engines": {
     "node": "20.14.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "nodemon": "^3.1.7"
   }
 }
