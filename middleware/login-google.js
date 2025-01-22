@@ -15,7 +15,7 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "/auth/google/callback",
     },
-    async function (_, _, profile, cb) {
+    async function (_, __, profile, cb) {
       try {
         let user = await findUserByUsername(profile.emails[0].value);
 
