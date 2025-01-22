@@ -2,7 +2,7 @@
 module.exports = {
   development: {
     client: "pg",
-    connection: process.env.DATABASE_URL || {
+    connection: process.env.DATABASE_URL_LOCAL || {
       // Use DATABASE_URL or individual values
       host: process.env.PGHOST,
       port: process.env.PGPORT,

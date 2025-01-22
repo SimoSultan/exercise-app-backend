@@ -7,7 +7,7 @@
     "migrate:production": "knex migrate:latest --env production",
     "migrate": "knex migrate:latest",
     "start": "node index.js",
-    "dev": "cross-env NODE_ENV=development USE_LOCAL_DB=true nodemon local.js",
+    "dev": "cross-env NODE_ENV=development USE_LOCAL_DB=true PORT=3000 nodemon local.js",
     "dev:vercel": "vercel dev",
     "build": "echo 'No build needed for plain JS'",
     "vercel-build": "npm run migrate:production && npm run build"

@@ -13,14 +13,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-
+    origin: [
+      process.env.FRONTEND_ORIGIN,
+      ...(process.env.ALLOWED_ORIGINS || "").split(","),
+    ],
     credentials: true,
   })
 );
@@ -52,11 +48,14 @@ app.use("/exercises", require("./routes/exercises"));
 app.use("/entries", require("./routes/entries"));
 app.use("/leaderboard", require("./routes/leaderboard"));
 
-function startServer() {
+async function startServer() {
   try {
-    console.log("Database connection successful!");
     app.get("/", (req, res) => {
-      res.send("Hello from Sixty6 Backend!");
+      if (process.env.NODE_ENV === "development") {
+        res.send("Hello from Sixty6 Backend!");
+      } else {
+        res.send("Hello from Vercel Backend!");
+      }
     });
   } catch (error) {
     console.error("Error during server startup:", error);
