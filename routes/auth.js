@@ -22,6 +22,9 @@ authRouter.get(
         return res.redirect("/login"); // Redirect on session error
       }
       // Successful login, redirect to the desired page
+      console.log("authenticated? ", req.isAuthenticated());
+      console.log("user:", req.user);
+
       res.redirect(process.env.FRONTEND_ORIGIN);
     });
   }
