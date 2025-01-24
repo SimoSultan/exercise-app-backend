@@ -25,8 +25,6 @@ userRouter.get("/list", isLoggedIn, async (req, res) => {
 
 // Returns the current logged in user.
 userRouter.get("/current", isLoggedIn, async (req, res) => {
-  console.log("/current: ", req.user);
-
   try {
     let user = await findUserByUsername(req.user.username);
     if (user) {
