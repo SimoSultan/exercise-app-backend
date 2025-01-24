@@ -53,8 +53,22 @@ passport.serializeUser((user, done) => {
   return done(null, user.username);
 });
 
-passport.deserializeUser((user, done) => {
-  return done(null, user);
+passport.deserializeUser(async (username, done) => {
+  // Receive the username
+  console.log("username: ", username);
+
+  try {
+    let user = await findUserByUsername(username);
+    console.log("user: ", user);
+
+    if (user.id) {
+      done(null, user); // Return the full user object
+    } else {
+      done(null, false); // User not found
+    }
+  } catch (err) {
+    done(err); // Handle database errors
+  }
 });
 
 // Create the user and also a default routine for them to use.
