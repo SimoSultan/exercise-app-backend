@@ -54,12 +54,10 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (username, done) => {
-  // Receive the username
-  console.log("username: ", username);
-
+  console.log("deserializeUser username: ", username);
   try {
     let user = await findUserByUsername(username);
-    console.log("user: ", user);
+    console.log("deserializeUser findUserByUsername: ", user);
 
     if (user.id) {
       done(null, user); // Return the full user object

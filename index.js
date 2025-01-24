@@ -3,6 +3,8 @@ const passport = require("passport");
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
+const PgStore = require("connect-pg-simple")(session);
+const db = require("./database/connect");
 
 const allowedOrigins = [process.env.FRONTEND_ORIGIN];
 if (process.env.NODE_ENV === "development") {
@@ -17,8 +19,6 @@ app.use(express.json());
 app.use(
   cors({
     origin: function (origin, callback) {
-      console.log("Request Origin:", origin); // Log the origin of the request
-      console.log("Allowed Origins:", allowedOrigins);
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -33,6 +33,12 @@ app.set("trust proxy", 1);
 
 app.use(
   session({
+    store: new PgStore({
+      // Use PgStore
+      pool: db, // Connection pool
+      tableName: "user_sessions", // Optional table name
+      createTableIfMissing: true,
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
