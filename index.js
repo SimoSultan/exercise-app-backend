@@ -17,6 +17,8 @@ app.use(express.json());
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Request Origin:", origin); // Log the origin of the request
+      console.log("Allowed Origins:", allowedOrigins);
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
