@@ -4,7 +4,10 @@ const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
 
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",");
+const allowedOrigins = [process.env.FRONTEND_ORIGIN];
+if (process.env.NODE_ENV === "development") {
+  allowedOrigins.push("http://localhost:5000");
+}
 
 // Use middlewares.
 const app = express();
@@ -13,10 +16,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_ORIGIN,
-      ...(process.env.ALLOWED_ORIGINS || "").split(","),
-    ],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
@@ -26,15 +32,14 @@ app.set("trust proxy", 1);
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
-    ...(process.env.NODE_ENV === "production" && {
-      cookie: {
-        sameSite: "none",
-        secure: true,
-        maxAge: 1000 * 60 * 60 * 24 * 7, // one week
-      },
-    }),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 24 * 7, // one week
+      httpOnly: true,
+    },
   })
 );
 
