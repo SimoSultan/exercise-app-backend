@@ -1,27 +1,34 @@
-const express = require('express')
-const userRouter = express.Router()
-const isLoggedIn = require('../middleware/isLoggedIn')
-const {findUserByUsername, getUser, listUsers, updateUser,  } = require('../database/queries/users')
-  
+const express = require("express");
+const userRouter = express.Router();
+const isLoggedIn = require("../middleware/isLoggedIn");
+const {
+  findUserByUsername,
+  getUser,
+  listUsers,
+  updateUser,
+} = require("../database/queries/users");
+
 // Lists all users.
 // TODO: This was only intended as a test endpoint, we shouldn't just be returning all the rows.
-userRouter.get('/list', isLoggedIn, async (req, res) => {
+userRouter.get("/list", isLoggedIn, async (req, res) => {
   try {
-    const users = await listUsers()
+    const users = await listUsers();
     if (users.length === 0) {
-      return res.status(404).send('no users found')
+      return res.status(404).send("no users found");
     }
-    return res.send(users)
+    return res.send(users);
   } catch (e) {
-    console.error(e)
-    return res.status(500).send('failed to fetch users')
+    console.error(e);
+    return res.status(500).send("failed to fetch users");
   }
-})
+});
 
 // Returns the current logged in user.
-userRouter.get('/current', isLoggedIn, async (req, res) => {
+userRouter.get("/current", isLoggedIn, async (req, res) => {
+  console.log("/current: ", req.user);
+
   try {
-    let user = await findUserByUsername(req.user);
+    let user = await findUserByUsername(req.user.username);
     if (user) {
       return res.send({
         id: user.id,
@@ -30,50 +37,56 @@ userRouter.get('/current', isLoggedIn, async (req, res) => {
         routineId: user.routine_id,
         username: user.username,
         picture: user.picture,
-      })
+      });
     }
   } catch (e) {
-    console.error(e)
-    return res.status(404).send('user not found')
+    console.error(e);
+    return res.status(404).send("user not found");
   }
-})
+});
 
-userRouter.post('/get', isLoggedIn, async (req, res) => {
+userRouter.post("/get", isLoggedIn, async (req, res) => {
   // Validate.
-  const { id } = req.body
+  const { id } = req.body;
   if (!id) {
-    return res.status(400).send('id is required')
+    return res.status(400).send("id is required");
   }
   // Fetch record.
   try {
-    const user = await getUser(id)
+    const user = await getUser(id);
     if (!user) {
-      return res.status(404).send('user not found')
+      return res.status(404).send("user not found");
     }
-    return res.send(user)
+    return res.send(user);
   } catch (e) {
-    console.error(e)
-    return res.status(500).send('failed to fetch user')
+    console.error(e);
+    return res.status(500).send("failed to fetch user");
   }
-})
+});
 
-userRouter.post('/update', isLoggedIn, async (req, res) => {
+userRouter.post("/update", isLoggedIn, async (req, res) => {
   // Validate.
-  const { id, firstName, lastName, picture } = req.body
+  const { id, firstName, lastName, picture } = req.body;
   if (!id) {
-    return res.status(400).send('id is required')
+    return res.status(400).send("id is required");
   }
   if (!firstName && !lastName && !picture) {
-    return res.status(400).send('require at least one of firstName, lastName or picture')
+    return res
+      .status(400)
+      .send("require at least one of firstName, lastName or picture");
   }
   // Update record.
   try {
-    const entry = await updateUser(id, { first_name: firstName, last_name: lastName, picture: picture })
-    return res.send(entry)
+    const entry = await updateUser(id, {
+      first_name: firstName,
+      last_name: lastName,
+      picture: picture,
+    });
+    return res.send(entry);
   } catch (e) {
-    console.error(e)
-    return res.status(500).send('failed to update entry')
+    console.error(e);
+    return res.status(500).send("failed to update entry");
   }
-})
+});
 
-module.exports = userRouter
+module.exports = userRouter;
