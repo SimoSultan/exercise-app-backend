@@ -1,19 +1,19 @@
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const {
   findUserByUsername,
   createUser,
   updateUser,
-} = require("../database/queries/users");
-const { createRoutine } = require("../database/queries/routines");
+} = require('../database/queries/users');
+const { createRoutine } = require('../database/queries/routines');
 
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback",
+      callbackURL: '/auth/google/callback',
     },
     async function (_, __, profile, cb) {
       try {
@@ -27,15 +27,15 @@ passport.use(
               profile.emails[0].value,
               profile.name.givenName,
               profile.name.familyName,
-              profile.photos?.[0]?.value
-            )
+              profile.photos?.[0]?.value,
+            ),
           );
         }
 
         // Updates users profile picture if it doesn't exist but is returned from Google.
         if (profile.photos?.[0]?.value && !user?.picture) {
           user = await updateUser(user.id, {
-            picture: profile.photos?.[0]?.value ?? "",
+            picture: profile.photos?.[0]?.value ?? '',
           });
         }
 
@@ -44,8 +44,8 @@ passport.use(
         console.error(e);
         return cb(e, null);
       }
-    }
-  )
+    },
+  ),
 );
 
 // Choose which parts of the user we want to store into the session.
@@ -71,7 +71,7 @@ async function handleSignup(email, firstName, lastName, picture = null) {
   const user = await createUser(email, firstName, lastName, picture);
   const routine = await createRoutine(
     user.id,
-    `${firstName} ${lastName}'s Routine`
+    `${firstName} ${lastName}'s Routine`,
   );
   return { ...user, routine_id: routine.id };
 }

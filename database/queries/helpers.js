@@ -2,24 +2,24 @@
 // `UPDATE exercises SET name=$1, amount=$2`
 // so that WHERE clauses can be appended after.
 function buildUpdateQueryBase(tableName, updates) {
-  const clauses = []
-  let query = `UPDATE ${tableName} SET`
-  let index = 0
+  const clauses = [];
+  let query = `UPDATE ${tableName} SET`;
+  let index = 0;
   for (let columnName in updates) {
-    let newValue = updates[columnName]
+    let newValue = updates[columnName];
     if (!newValue) {
-      continue
+      continue;
     }
-    index++
+    index++;
     // Escape keywords.
     if (columnName === 'order') {
-      columnName = '"order"'
+      columnName = '"order"';
     }
-    clauses.push(`${columnName}=$${index}`)
+    clauses.push(`${columnName}=$${index}`);
   }
-  return `${query} ${clauses.join(', ')}`
+  return `${query} ${clauses.join(', ')}`;
 }
 
 module.exports = {
-    buildUpdateQueryBase,
-}
+  buildUpdateQueryBase,
+};

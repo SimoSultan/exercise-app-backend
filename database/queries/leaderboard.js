@@ -1,7 +1,8 @@
-const db = require('../connect')
+const db = require('../connect');
 
 async function getDailyLeaderboardData(fromDate, toDate) {
-  let { rows: leaderboardData } = await db.query(`
+  let { rows: leaderboardData } = await db.query(
+    `
     SELECT
       u2.id as user_id,
       u2.first_name,
@@ -30,20 +31,24 @@ async function getDailyLeaderboardData(fromDate, toDate) {
       WHERE en.completed_at BETWEEN $1 AND $2
       GROUP BY ex.id, u.id
     ) AS t ON u2.id = t.user_id
-  `, [fromDate, toDate])
-  const exerciseCounts = await getExerciseCounts()
+  `,
+    [fromDate, toDate],
+  );
+  const exerciseCounts = await getExerciseCounts();
   // Append the exercise counts to the entries, as we need this to calculate the
   // final percentages.
   leaderboardData = leaderboardData.map((entry) => {
-    const totalExercises = exerciseCounts.find(({ user_id }) => entry.user_id == user_id)?.total_exercises || 0
-    return Object.assign(entry, { totalExercises })
-  })
-  return leaderboardData
+    const totalExercises =
+      exerciseCounts.find(({ user_id }) => entry.user_id == user_id)
+        ?.total_exercises || 0;
+    return Object.assign(entry, { totalExercises });
+  });
+  return leaderboardData;
 }
 
 async function getUserLeaderboardData(fromDate, toDate, userId) {
-
-  let { rows: leaderboardData } = await db.query(`
+  let { rows: leaderboardData } = await db.query(
+    `
     SELECT
       u2.id as user_id,
       u2.first_name,
@@ -73,15 +78,19 @@ async function getUserLeaderboardData(fromDate, toDate, userId) {
       WHERE u.id=$3
       GROUP BY ex.id, u.id
     ) AS t ON u2.id = t.user_id
-  `, [fromDate, toDate, userId])
-  const exerciseCounts = await getExerciseCounts()
+  `,
+    [fromDate, toDate, userId],
+  );
+  const exerciseCounts = await getExerciseCounts();
   // Append the exercise counts to the entries, as we need this to calculate the
   // final percentages.
   leaderboardData = leaderboardData.map((entry) => {
-    const totalExercises = exerciseCounts.find(({ user_id }) => entry.user_id == user_id)?.total_exercises || 0
-    return Object.assign(entry, { totalExercises })
-  })
-  return leaderboardData
+    const totalExercises =
+      exerciseCounts.find(({ user_id }) => entry.user_id == user_id)
+        ?.total_exercises || 0;
+    return Object.assign(entry, { totalExercises });
+  });
+  return leaderboardData;
 }
 
 async function getExerciseCounts() {
@@ -95,11 +104,11 @@ async function getExerciseCounts() {
     INNER join exercises AS e
       ON e.routine_id = r.id
     GROUP BY u.id
-  `)
-  return res.rows
+  `);
+  return res.rows;
 }
 
 module.exports = {
-    getDailyLeaderboardData,
-    getUserLeaderboardData,
-}
+  getDailyLeaderboardData,
+  getUserLeaderboardData,
+};
