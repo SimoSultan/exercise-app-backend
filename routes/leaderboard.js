@@ -1,27 +1,30 @@
-const express = require('express')
-const { getDailyLeaderboardData } = require('../database/queries/leaderboard')
-const { getStartOfDayFromDate, getEndOfDayFromDate} = require('../utils/utils')
-const leaderboardRouter = express.Router()
+const express = require('express');
+const { getDailyLeaderboardData } = require('../database/queries/leaderboard');
+const {
+  getStartOfDayFromDate,
+  getEndOfDayFromDate,
+} = require('../utils/utils');
+const leaderboardRouter = express.Router();
 
 leaderboardRouter.post('/', async (req, res) => {
-  const { from, to} = req.body
+  const { from, to } = req.body;
 
   if (!from) {
-    return res.status(400).send('from day is required')
+    return res.status(400).send('from day is required');
   }
 
   if (!to) {
-    return res.status(400).send('to day is required')
+    return res.status(400).send('to day is required');
   }
 
   // Get the start and end of the day, and pass those in as the time range.
-  const start = getStartOfDayFromDate(from)
-  const end = getEndOfDayFromDate(to)
+  const start = getStartOfDayFromDate(from);
+  const end = getEndOfDayFromDate(to);
 
-  let leaderboardData = await getDailyLeaderboardData(start, end)
+  let leaderboardData = await getDailyLeaderboardData(start, end);
   // Calculate the percentages and strip the data we don't need.
   const leaderboardPercentages = leaderboardData.reduce((acc, entry) => {
-    const exercisePercentage = calculateExercisePercentage(entry)
+    const exercisePercentage = calculateExercisePercentage(entry);
     if (!acc[entry.user_id]) {
       acc[entry.user_id] = {
         userId: entry.user_id,
@@ -29,39 +32,38 @@ leaderboardRouter.post('/', async (req, res) => {
         lastName: entry.last_name,
         percentage: exercisePercentage,
         picture: entry.picture,
-      }
-      return acc
+      };
+      return acc;
     }
-    acc[entry.user_id].percentage += exercisePercentage
-    return acc
-  }, {})
-  res.json(leaderboardPercentages)
-})
-
+    acc[entry.user_id].percentage += exercisePercentage;
+    return acc;
+  }, {});
+  res.json(leaderboardPercentages);
+});
 
 leaderboardRouter.post('/user', async (req, res) => {
-  const { from, to, userId } = req.body
+  const { from, to, userId } = req.body;
 
   if (!from) {
-    return res.status(400).send('from day is required')
+    return res.status(400).send('from day is required');
   }
 
   if (!to) {
-    return res.status(400).send('to day is required')
+    return res.status(400).send('to day is required');
   }
 
   if (!userId) {
-    return res.status(400).send('userId is required')
+    return res.status(400).send('userId is required');
   }
 
   // Get the start and end of the day, and pass those in as the time range.
-  const start = getStartOfDayFromDate(from)
-  const end = getEndOfDayFromDate(to)
+  const start = getStartOfDayFromDate(from);
+  const end = getEndOfDayFromDate(to);
 
-  let leaderboardData = await getDailyLeaderboardData(start, end, userId)
+  let leaderboardData = await getDailyLeaderboardData(start, end, userId);
   // Calculate the percentages and strip the data we don't need.
   const leaderboardPercentages = leaderboardData.reduce((acc, entry) => {
-    const exercisePercentage = calculateExercisePercentage(entry)
+    const exercisePercentage = calculateExercisePercentage(entry);
     if (!acc[entry.user_id]) {
       acc[entry.user_id] = {
         userId: entry.user_id,
@@ -69,21 +71,21 @@ leaderboardRouter.post('/user', async (req, res) => {
         lastName: entry.last_name,
         percentage: exercisePercentage,
         picture: entry.picture,
-      }
-      return acc
+      };
+      return acc;
     }
-    acc[entry.user_id].percentage += exercisePercentage
-    return acc
-  }, {})
-  res.json(leaderboardPercentages)
-})
+    acc[entry.user_id].percentage += exercisePercentage;
+    return acc;
+  }, {});
+  res.json(leaderboardPercentages);
+});
 
 function calculateExercisePercentage(entry) {
   if (!entry.entry_amount || !entry.exercise_amount) {
-    return 0
+    return 0;
   }
 
-  return (entry.entry_amount / entry.exercise_amount) / entry.totalExercises
+  return entry.entry_amount / entry.exercise_amount / entry.totalExercises;
 }
 
-module.exports = leaderboardRouter
+module.exports = leaderboardRouter;

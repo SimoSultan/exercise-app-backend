@@ -1,7 +1,7 @@
 // knexfile.js
 module.exports = {
   development: {
-    client: "pg",
+    client: 'pg',
     connection: process.env.DATABASE_URL_LOCAL || {
       // Use DATABASE_URL or individual values
       host: process.env.PGHOST,
@@ -11,16 +11,16 @@ module.exports = {
       password: process.env.PGPASSWORD,
     },
     migrations: {
-      directory: "./database/migrations", // Directory where your migration files will be stored
+      directory: './database/migrations', // Directory where your migration files will be stored
     },
   },
 
   production: {
     // Important for Vercel
-    client: "pg",
+    client: 'pg',
     connection: process.env.DATABASE_URL, // Use DATABASE_URL in production (Vercel)
     migrations: {
-      directory: "./database/migrations",
+      directory: './database/migrations',
     },
   },
 };

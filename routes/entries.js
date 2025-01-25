@@ -1,106 +1,109 @@
-const express = require('express')
-const { 
+const express = require('express');
+const {
   createEntry,
   listEntries,
   listEntriesPerExerciseOnDate,
   updateEntry,
   deleteEntry,
-} = require('../database/queries/entries')
-const entryRouter = express.Router()
-const isLoggedIn = require('../middleware/isLoggedIn')
-const { getStartOfDayFromDate, getEndOfDayFromDate, getAESTISOString } = require('../utils/utils')
+} = require('../database/queries/entries');
+const entryRouter = express.Router();
+const isLoggedIn = require('../middleware/isLoggedIn');
+const {
+  getStartOfDayFromDate,
+  getEndOfDayFromDate,
+  getAESTISOString,
+} = require('../utils/utils');
 
 // Create a new entry.
 entryRouter.post('/create', isLoggedIn, async (req, res) => {
   // Validate.
-  let { exerciseId, amount } = req.body
+  let { exerciseId, amount } = req.body;
   if (!exerciseId) {
-    return res.status(400).send('exerciseId is required')
+    return res.status(400).send('exerciseId is required');
   }
   if (!amount) {
-    return res.status(400).send('amount is required')
+    return res.status(400).send('amount is required');
   }
 
   const day = new Date();
 
   // Create record.
   try {
-    const entry = await createEntry(exerciseId, amount, day, day)
-    return res.send(entry)
+    const entry = await createEntry(exerciseId, amount, day, day);
+    return res.send(entry);
   } catch (e) {
-    console.error(e)
-    return res.status(500).send('failed to create entry')
+    console.error(e);
+    return res.status(500).send('failed to create entry');
   }
-})
+});
 
-// List exercises by their routine. 
+// List exercises by their routine.
 entryRouter.post('/list', isLoggedIn, async (req, res) => {
   // Validate.
-  const { exerciseId } = req.body
+  const { exerciseId } = req.body;
   if (!exerciseId) {
-    return res.status(400).send('exerciseId is required')
+    return res.status(400).send('exerciseId is required');
   }
   // Fetch records.
   try {
-    const entries = await listEntries(exerciseId)
+    const entries = await listEntries(exerciseId);
     if (entries.length <= 0) {
-      return res.status(404).send('no entries found')
+      return res.status(404).send('no entries found');
     }
-    return res.send(entries)
+    return res.send(entries);
   } catch (e) {
-    console.error(e)
-    return res.status(500).send('failed to fetch entries')
+    console.error(e);
+    return res.status(500).send('failed to fetch entries');
   }
-})
+});
 
 // Batch get all entries for all exercises for current date.
 entryRouter.post('/list-batch-daily', isLoggedIn, async (req, res) => {
   // Validate.
-  let { exerciseIds, day } = req.body
+  let { exerciseIds, day } = req.body;
 
   if (exerciseIds.length < 1) {
-    return res.status(400).send('no exercise IDs submitted')
+    return res.status(400).send('no exercise IDs submitted');
   }
   if (!day) {
-    return res.status(400).send('day is required')
+    return res.status(400).send('day is required');
   }
 
-
-  day = getAESTISOString(day)
+  day = getAESTISOString(day);
 
   // Get the start and end of the day, and pass those in as the time range.
-  const start = getStartOfDayFromDate(day)
-  const end = getEndOfDayFromDate(day)
+  const start = getStartOfDayFromDate(day);
+  const end = getEndOfDayFromDate(day);
 
-  let allEntries = {}
+  let allEntries = {};
   // TODO: Make single call instead of for await loop
   for await (const id of exerciseIds) {
     // Validate.
     try {
       if (!id) {
-        return res.status(400).send('id is required')
+        return res.status(400).send('id is required');
       }
       // Update record.
-      const entries = await listEntriesPerExerciseOnDate(id, start, end)
+      const entries = await listEntriesPerExerciseOnDate(id, start, end);
       allEntries = {
         ...allEntries,
         [id]: entries,
-      }
+      };
     } catch (e) {
-      console.error(e)
-      return res.status(500).send('failed to fetch entries')
+      console.error(e);
+      return res.status(500).send('failed to fetch entries');
     }
   }
 
-  return res.send(allEntries)
-})
+  return res.send(allEntries);
+});
 
 // Batch get all entries for all exercises for current date.
 // entryRouter.post('/list-batch-daily', isLoggedIn, async (req, res) => {
 //   // Validate.
 //   let { exerciseIds, day } = req.body
 //   console.log('exerciseIds', exerciseIds);
-// h 
+// h
 //   if (exerciseIds.length < 1) {
 //     return res.status(400).send('no exercise IDs submitted')
 //   }
@@ -116,7 +119,7 @@ entryRouter.post('/list-batch-daily', isLoggedIn, async (req, res) => {
 //   // Get the start and end of the day, and pass those in as the time range.
 //   const start = getStartOfDayFromDate(day)
 //   const end = getEndOfDayFromDate(day)
- 
+
 //   try {
 //     // Update record.
 //     const entries = await listEntriesAllExercisesOnDate(stringOfExerciseIds, start, end)
@@ -133,40 +136,40 @@ entryRouter.post('/list-batch-daily', isLoggedIn, async (req, res) => {
 
 entryRouter.post('/update', isLoggedIn, async (req, res) => {
   // Validate.
-  const { id, amount } = req.body
+  const { id, amount } = req.body;
   if (!id) {
-    return res.status(400).send('id is required')
+    return res.status(400).send('id is required');
   }
   if (!amount) {
-    return res.status(400).send('amount is required')
+    return res.status(400).send('amount is required');
   }
   // Update record.
   try {
-    const entry = await updateEntry(id, amount)
-    return res.send(entry)
+    const entry = await updateEntry(id, amount);
+    return res.send(entry);
   } catch (e) {
-    console.error(e)
-    return res.status(500).send('failed to update entry')
+    console.error(e);
+    return res.status(500).send('failed to update entry');
   }
-})
+});
 
 entryRouter.post('/delete', isLoggedIn, async (req, res) => {
   // Validate.
-  const {id} = req.body
+  const { id } = req.body;
   if (!id) {
-    return res.status(400).send('id is required')
+    return res.status(400).send('id is required');
   }
   // Delete record.
   try {
-    const rowCount = await deleteEntry(id)
+    const rowCount = await deleteEntry(id);
     if (rowCount === 0) {
-      return res.status(400).send('entry not found')
+      return res.status(400).send('entry not found');
     }
-    return res.status(200).end()
+    return res.status(200).end();
   } catch (e) {
-    console.error(e)
-    return res.status(500).send('failed to delete entry')
+    console.error(e);
+    return res.status(500).send('failed to delete entry');
   }
-})
+});
 
-module.exports = entryRouter
+module.exports = entryRouter;
