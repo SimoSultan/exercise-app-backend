@@ -1,6 +1,6 @@
-const db = require('../connect');
+import db from '../connect.js';
 
-async function getDailyLeaderboardData(fromDate, toDate) {
+export const getDailyLeaderboardData = async (fromDate, toDate) => {
   let { rows: leaderboardData } = await db.query(
     `
     SELECT
@@ -44,9 +44,9 @@ async function getDailyLeaderboardData(fromDate, toDate) {
     return Object.assign(entry, { totalExercises });
   });
   return leaderboardData;
-}
+};
 
-async function getUserLeaderboardData(fromDate, toDate, userId) {
+export const getUserLeaderboardData = async (fromDate, toDate, userId) => {
   let { rows: leaderboardData } = await db.query(
     `
     SELECT
@@ -91,9 +91,9 @@ async function getUserLeaderboardData(fromDate, toDate, userId) {
     return Object.assign(entry, { totalExercises });
   });
   return leaderboardData;
-}
+};
 
-async function getExerciseCounts() {
+export const getExerciseCounts = async () => {
   const res = await db.query(`
     SELECT
       u.id AS user_id,
@@ -106,9 +106,4 @@ async function getExerciseCounts() {
     GROUP BY u.id
   `);
   return res.rows;
-}
-
-module.exports = {
-  getDailyLeaderboardData,
-  getUserLeaderboardData,
 };

@@ -1,52 +1,61 @@
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
-const {
+import {
   findUserByUsername,
   createUser,
   updateUser,
-} = require('../database/queries/users');
-const { createRoutine } = require('../database/queries/routines');
+} from '../database/queries/users.js';
+import { createRoutine } from '../database/queries/routines.js';
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: '/auth/google/callback',
-    },
-    async function (_, __, profile, cb) {
-      try {
-        let user = await findUserByUsername(profile.emails[0].value);
+// Create the user and also a default routine for them to use.
+async function handleSignup(email, firstName, lastName, picture = null) {
+  const user = await createUser(email, firstName, lastName, picture);
+  const routine = await createRoutine(
+    user.id,
+    `${firstName} ${lastName}'s Routine`,
+  );
+  return { ...user, routine_id: routine.id };
+}
 
-        if (profile.emails[0].value && !user) {
-          // No existing user found, create them.
-          return cb(
-            null,
-            await handleSignup(
-              profile.emails[0].value,
-              profile.name.givenName,
-              profile.name.familyName,
-              profile.photos?.[0]?.value,
-            ),
-          );
-        }
+const options = {
+  clientID: process.env.GOOGLE_CLIENT_ID || '',
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+  callbackURL: '/auth/google/callback',
+};
 
-        // Updates users profile picture if it doesn't exist but is returned from Google.
-        if (profile.photos?.[0]?.value && !user?.picture) {
-          user = await updateUser(user.id, {
-            picture: profile.photos?.[0]?.value ?? '',
-          });
-        }
+const verify = async (_accessToken, __refreshToken, profile, cb) => {
+  try {
+    let user = await findUserByUsername(profile.emails[0].value);
 
-        return cb(null, user);
-      } catch (e) {
-        console.error(e);
-        return cb(e, null);
-      }
-    },
-  ),
-);
+    if (profile.emails[0].value && !user) {
+      // No existing user found, create them.
+      return cb(
+        null,
+        await handleSignup(
+          profile.emails[0].value,
+          profile.name.givenName,
+          profile.name.familyName,
+          profile.photos?.[0]?.value,
+        ),
+      );
+    }
+
+    // Updates users profile picture if it doesn't exist but is returned from Google.
+    if (profile.photos?.[0]?.value && !user?.picture) {
+      user = await updateUser(user.id, {
+        picture: profile.photos?.[0]?.value ?? '',
+      });
+    }
+
+    return cb(null, user);
+  } catch (e) {
+    console.error(e);
+    return cb(e, null);
+  }
+};
+
+passport.use(new GoogleStrategy(options, verify));
 
 // Choose which parts of the user we want to store into the session.
 passport.serializeUser((user, done) => {
@@ -65,13 +74,3 @@ passport.deserializeUser(async (username, done) => {
     done(err); // Handle database errors
   }
 });
-
-// Create the user and also a default routine for them to use.
-async function handleSignup(email, firstName, lastName, picture = null) {
-  const user = await createUser(email, firstName, lastName, picture);
-  const routine = await createRoutine(
-    user.id,
-    `${firstName} ${lastName}'s Routine`,
-  );
-  return { ...user, routine_id: routine.id };
-}

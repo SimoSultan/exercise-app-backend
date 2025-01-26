@@ -1,5 +1,5 @@
 // knexfile.js
-module.exports = {
+const config = {
   development: {
     client: 'pg',
     connection: process.env.DATABASE_URL_LOCAL || {
@@ -24,3 +24,5 @@ module.exports = {
     },
   },
 };
+
+export default config;

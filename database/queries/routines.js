@@ -1,7 +1,7 @@
-const db = require('../connect');
+import db from '../connect.js';
 
 // Note: For MVP we probably won't support multiple routines.
-async function createRoutine(ownerUserId, name) {
+export const createRoutine = async (ownerUserId, name) => {
   const res = await db.query(
     `
     INSERT INTO routines (owner_user_id, name)
@@ -14,8 +14,4 @@ async function createRoutine(ownerUserId, name) {
     throw new Error('expected a routine to be created');
   }
   return res.rows[0];
-}
-
-module.exports = {
-  createRoutine,
 };

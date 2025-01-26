@@ -1,14 +1,16 @@
-const express = require('express');
-const {
+import express from 'express';
+
+import {
   createExercise,
   listExercises,
   getExercise,
   updateExercise,
   deleteExercise,
-} = require('../database/queries/exercises');
-const exerciseRouter = express.Router();
-const isLoggedIn = require('../middleware/isLoggedIn');
+} from '../database/queries/exercises.js';
 
+import { isLoggedIn } from '../middleware/isLoggedIn.js';
+
+const exerciseRouter = express.Router();
 // Create a new exercise.
 exerciseRouter.post('/create', isLoggedIn, async (req, res) => {
   // Validate.
@@ -156,4 +158,4 @@ exerciseRouter.post('/delete', isLoggedIn, async (req, res) => {
   }
 });
 
-module.exports = exerciseRouter;
+export default exerciseRouter;

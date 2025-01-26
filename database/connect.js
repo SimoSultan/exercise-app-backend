@@ -1,4 +1,5 @@
-const { Pool } = require('pg');
+import pg from 'pg';
+const { Pool } = pg;
 
 const db = new Pool({
   connectionString:
@@ -25,4 +26,4 @@ try {
   process.exit(1); // Important: Exit the process on error
 }
 
-module.exports = db;
+export default db;

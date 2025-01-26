@@ -1,12 +1,13 @@
-const express = require('express');
+import express from 'express';
+import { isLoggedIn } from '../middleware/isLoggedIn.js';
+
 const userRouter = express.Router();
-const isLoggedIn = require('../middleware/isLoggedIn');
-const {
+import {
   findUserByUsername,
   getUser,
   listUsers,
   updateUser,
-} = require('../database/queries/users');
+} from '../database/queries/users.js';
 
 // Lists all users.
 // TODO: This was only intended as a test endpoint, we shouldn't just be returning all the rows.
@@ -87,4 +88,4 @@ userRouter.post('/update', isLoggedIn, async (req, res) => {
   }
 });
 
-module.exports = userRouter;
+export default userRouter;

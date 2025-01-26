@@ -1,7 +1,7 @@
-const db = require('../connect');
-const { buildUpdateQueryBase } = require('./helpers');
+import db from '../connect.js';
+import { buildUpdateQueryBase } from './helpers.js';
 
-async function createExercise(routineId, name, amount, unit, order) {
+export const createExercise = async (routineId, name, amount, unit, order) => {
   const res = await db.query(
     `
     INSERT INTO exercises (routine_id, name, amount, unit, "order")
@@ -14,9 +14,9 @@ async function createExercise(routineId, name, amount, unit, order) {
     throw new Error('expected a exercise to be created');
   }
   return res.rows[0];
-}
+};
 
-async function listExercises(routineId) {
+export const listExercises = async (routineId) => {
   const res = await db.query(
     `
     SELECT id, routine_id, name, amount, unit, "order", created_at
@@ -26,9 +26,9 @@ async function listExercises(routineId) {
     [routineId],
   );
   return res.rows;
-}
+};
 
-async function getExercise(id) {
+export const getExercise = async (id) => {
   const res = await db.query(
     `
     SELECT id, routine_id, name, amount, unit, "order", created_at
@@ -38,10 +38,10 @@ async function getExercise(id) {
     [id],
   );
   return res.rows[0];
-}
+};
 
 // `updates` should be { column1Name: newValue1, column2Name: newValue2... }
-async function updateExercise(id, updates) {
+export const updateExercise = async (id, updates) => {
   const validUpdates = Object.keys(updates).reduce((acc, columnName) => {
     const newValue = updates[columnName];
     if (!newValue) {
@@ -62,17 +62,9 @@ async function updateExercise(id, updates) {
     throw new Error('expected an exercise to be updated');
   }
   return res.rows[0];
-}
+};
 
-async function deleteExercise(id) {
+export const deleteExercise = async (id) => {
   const res = await db.query('DELETE FROM exercises WHERE id=$1', [id]);
   return res.rowCount;
-}
-
-module.exports = {
-  createExercise,
-  listExercises,
-  getExercise,
-  updateExercise,
-  deleteExercise,
 };
