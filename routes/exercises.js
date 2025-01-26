@@ -2,12 +2,11 @@ import express from 'express';
 
 import {
   createExercise,
-  listExercises,
-  getExercise,
-  updateExercise,
   deleteExercise,
+  getExercise,
+  listExercises,
+  updateExercise,
 } from '../database/queries/exercises.js';
-
 import { isLoggedIn } from '../middleware/isLoggedIn.js';
 
 const exerciseRouter = express.Router();

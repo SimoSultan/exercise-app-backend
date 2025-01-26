@@ -1,16 +1,17 @@
 import express from 'express';
+
 import {
   createEntry,
+  deleteEntry,
   listEntries,
   listEntriesPerExerciseOnDate,
   updateEntry,
-  deleteEntry,
 } from '../database/queries/entries.js';
 import { isLoggedIn } from '../middleware/isLoggedIn.js';
 import {
-  getStartOfDayFromDate,
-  getEndOfDayFromDate,
   getAESTISOString,
+  getEndOfDayFromDate,
+  getStartOfDayFromDate,
 } from '../utils/utils.js';
 
 const entryRouter = express.Router();

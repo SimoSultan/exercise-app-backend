@@ -1,9 +1,9 @@
 import express from 'express';
 import passport from 'passport';
 
-const authRouter = express.Router();
-
 import '../middleware/login-google.js';
+
+const authRouter = express.Router();
 
 // Log in with Google.
 authRouter.get(

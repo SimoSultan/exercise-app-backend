@@ -1,6 +1,7 @@
 import express from 'express';
+
 import { getDailyLeaderboardData } from '../database/queries/leaderboard.js';
-import { getStartOfDayFromDate, getEndOfDayFromDate } from '../utils/utils.js';
+import { getEndOfDayFromDate, getStartOfDayFromDate } from '../utils/utils.js';
 
 const leaderboardRouter = express.Router();
 
