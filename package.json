@@ -1,12 +1,11 @@
 {
   "name": "exercise-app-backend",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "migrate:production": "knex migrate:latest --env production",
     "migrate": "knex migrate:latest",
-    "start": "node index.js",
     "dev": "cross-env NODE_ENV=development USE_LOCAL_DB=true PORT=3000 nodemon local.js",
     "dev:vercel": "vercel dev",
     "build": "echo 'No build needed for plain JS'",

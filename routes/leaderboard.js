@@ -1,9 +1,7 @@
-const express = require('express');
-const { getDailyLeaderboardData } = require('../database/queries/leaderboard');
-const {
-  getStartOfDayFromDate,
-  getEndOfDayFromDate,
-} = require('../utils/utils');
+import express from 'express';
+import { getDailyLeaderboardData } from '../database/queries/leaderboard.js';
+import { getStartOfDayFromDate, getEndOfDayFromDate } from '../utils/utils.js';
+
 const leaderboardRouter = express.Router();
 
 leaderboardRouter.post('/', async (req, res) => {
@@ -88,4 +86,4 @@ function calculateExercisePercentage(entry) {
   return entry.entry_amount / entry.exercise_amount / entry.totalExercises;
 }
 
-module.exports = leaderboardRouter;
+export default leaderboardRouter;

@@ -1,8 +1,9 @@
-const express = require('express');
-const authRouter = express.Router();
-const passport = require('passport');
+import express from 'express';
+import passport from 'passport';
 
-require('../middleware/login-google');
+const authRouter = express.Router();
+
+import '../middleware/login-google.js';
 
 // Log in with Google.
 authRouter.get(
@@ -46,4 +47,4 @@ authRouter.get('/logout', (req, res) => {
   });
 });
 
-module.exports = authRouter;
+export default authRouter;

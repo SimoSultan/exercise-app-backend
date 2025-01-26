@@ -1,7 +1,7 @@
-const db = require('../connect');
-const { buildUpdateQueryBase } = require('./helpers');
+import db from '../connect.js';
+import { buildUpdateQueryBase } from './helpers.js';
 
-async function findUserByUsername(username, picture) {
+export async function findUserByUsername(username, picture) {
   const res = await db.query(
     `
     SELECT
@@ -21,7 +21,7 @@ async function findUserByUsername(username, picture) {
   return res.rows[0];
 }
 
-async function createUser(username, firstName, lastName, picture) {
+export async function createUser(username, firstName, lastName, picture) {
   const res = await db.query(
     `
     INSERT INTO users(username, first_name, last_name, picture)
@@ -36,7 +36,7 @@ async function createUser(username, firstName, lastName, picture) {
   return res.rows[0];
 }
 
-async function getUser(id) {
+export async function getUser(id) {
   const res = await db.query(
     `
     SELECT
@@ -56,7 +56,7 @@ async function getUser(id) {
   return res.rows[0];
 }
 
-async function listUsers() {
+export async function listUsers() {
   const res = await db.query(`
     SELECT
       u.id,
@@ -72,7 +72,7 @@ async function listUsers() {
   return res.rows;
 }
 
-async function updateUser(id, updates) {
+export async function updateUser(id, updates) {
   const validUpdates = Object.keys(updates).reduce((acc, columnName) => {
     const newValue = updates[columnName];
     if (!newValue) {
@@ -94,11 +94,3 @@ async function updateUser(id, updates) {
   }
   return res.rows[0];
 }
-
-module.exports = {
-  findUserByUsername,
-  createUser,
-  getUser,
-  listUsers,
-  updateUser,
-};

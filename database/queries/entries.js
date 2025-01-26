@@ -1,6 +1,11 @@
-const db = require('../connect');
+import db from '../connect.js';
 
-async function createEntry(exerciseId, amount, createdAt, completedAt) {
+export const createEntry = async (
+  exerciseId,
+  amount,
+  createdAt,
+  completedAt,
+) => {
   let columnNames = 'exercise_id, amount, created_at';
   let values = '$1, $2, $3';
   let args = [exerciseId, amount, createdAt];
@@ -21,9 +26,9 @@ async function createEntry(exerciseId, amount, createdAt, completedAt) {
     throw new Error('expected an entry to be created');
   }
   return res.rows[0];
-}
+};
 
-async function listEntries(exerciseId) {
+export const listEntries = async (exerciseId) => {
   const res = await db.query(
     `
     SELECT id, exercise_id, amount, created_at, completed_at
@@ -33,9 +38,13 @@ async function listEntries(exerciseId) {
     [exerciseId],
   );
   return res.rows;
-}
+};
 
-async function listEntriesPerExerciseOnDate(exerciseId, fromDate, toDate) {
+export const listEntriesPerExerciseOnDate = async (
+  exerciseId,
+  fromDate,
+  toDate,
+) => {
   const res = await db.query(
     `
     SELECT id, exercise_id, amount, created_at, completed_at
@@ -46,9 +55,13 @@ async function listEntriesPerExerciseOnDate(exerciseId, fromDate, toDate) {
     [exerciseId, fromDate, toDate],
   );
   return res.rows;
-}
+};
 
-async function listEntriesAllExercisesOnDate(exerciseIds, fromDate, toDate) {
+export const listEntriesAllExercisesOnDate = async (
+  exerciseIds,
+  fromDate,
+  toDate,
+) => {
   // TODO: fix
   const ids = exerciseIds.split(', ');
   console.log(ids);
@@ -62,9 +75,9 @@ async function listEntriesAllExercisesOnDate(exerciseIds, fromDate, toDate) {
     [exerciseIds, fromDate, toDate],
   );
   return res.rows;
-}
+};
 
-async function updateEntry(id, amount) {
+export const updateEntry = async (id, amount) => {
   // TODO: Support `created_at`.
   const res = await db.query(
     `
@@ -79,18 +92,9 @@ async function updateEntry(id, amount) {
     throw new Error('expected an entry to be updated');
   }
   return res.rows[0];
-}
+};
 
-async function deleteEntry(id) {
+export const deleteEntry = async (id) => {
   const res = await db.query('DELETE FROM entries WHERE id=$1', [id]);
   return res.rowCount;
-}
-
-module.exports = {
-  createEntry,
-  listEntries,
-  listEntriesPerExerciseOnDate,
-  listEntriesAllExercisesOnDate,
-  updateEntry,
-  deleteEntry,
 };

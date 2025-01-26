@@ -1,18 +1,19 @@
-const express = require('express');
-const {
+import express from 'express';
+import {
   createEntry,
   listEntries,
   listEntriesPerExerciseOnDate,
   updateEntry,
   deleteEntry,
-} = require('../database/queries/entries');
-const entryRouter = express.Router();
-const isLoggedIn = require('../middleware/isLoggedIn');
-const {
+} from '../database/queries/entries.js';
+import { isLoggedIn } from '../middleware/isLoggedIn.js';
+import {
   getStartOfDayFromDate,
   getEndOfDayFromDate,
   getAESTISOString,
-} = require('../utils/utils');
+} from '../utils/utils.js';
+
+const entryRouter = express.Router();
 
 // Create a new entry.
 entryRouter.post('/create', isLoggedIn, async (req, res) => {
@@ -172,4 +173,4 @@ entryRouter.post('/delete', isLoggedIn, async (req, res) => {
   }
 });
 
-module.exports = entryRouter;
+export default entryRouter;

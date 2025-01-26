@@ -1,7 +1,7 @@
 // This function spits out something like...
 // `UPDATE exercises SET name=$1, amount=$2`
 // so that WHERE clauses can be appended after.
-function buildUpdateQueryBase(tableName, updates) {
+export const buildUpdateQueryBase = async (tableName, updates) => {
   const clauses = [];
   let query = `UPDATE ${tableName} SET`;
   let index = 0;
@@ -18,8 +18,4 @@ function buildUpdateQueryBase(tableName, updates) {
     clauses.push(`${columnName}=$${index}`);
   }
   return `${query} ${clauses.join(', ')}`;
-}
-
-module.exports = {
-  buildUpdateQueryBase,
 };
