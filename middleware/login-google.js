@@ -1,12 +1,12 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
+import { createRoutine } from '../database/queries/routines.js';
 import {
-  findUserByUsername,
   createUser,
+  findUserByUsername,
   updateUser,
 } from '../database/queries/users.js';
-import { createRoutine } from '../database/queries/routines.js';
 
 // Create the user and also a default routine for them to use.
 async function handleSignup(email, firstName, lastName, picture = null) {

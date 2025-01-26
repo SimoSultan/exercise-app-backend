@@ -1,17 +1,16 @@
-import 'dotenv/config'; // Import and configure dotenv
-
-import passport from 'passport';
+import ConnectPg from 'connect-pg-simple';
+import cors from 'cors';
+import 'dotenv/config';
 import express from 'express';
 import session from 'express-session';
-import cors from 'cors';
-import ConnectPg from 'connect-pg-simple';
+import passport from 'passport';
 
 import db from './database/connect.js';
 import authRouter from './routes/auth.js';
-import userRouter from './routes/users.js';
-import exerciseRouter from './routes/exercises.js';
 import entriesRoutes from './routes/entries.js';
+import exerciseRouter from './routes/exercises.js';
 import leaderboardRouter from './routes/leaderboard.js';
+import userRouter from './routes/users.js';
 
 const PgStore = ConnectPg(session);
 

@@ -1,13 +1,14 @@
 import express from 'express';
-import { isLoggedIn } from '../middleware/isLoggedIn.js';
 
-const userRouter = express.Router();
 import {
   findUserByUsername,
   getUser,
   listUsers,
   updateUser,
 } from '../database/queries/users.js';
+import { isLoggedIn } from '../middleware/isLoggedIn.js';
+
+const userRouter = express.Router();
 
 // Lists all users.
 // TODO: This was only intended as a test endpoint, we shouldn't just be returning all the rows.
