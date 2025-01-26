@@ -17,8 +17,6 @@ const PgStore = ConnectPg(session);
 
 const allowedOrigins = [process.env.FRONTEND_ORIGIN];
 
-console.log(allowedOrigins);
-
 // Use middlewares.
 const app = express();
 app.use(passport.initialize());
